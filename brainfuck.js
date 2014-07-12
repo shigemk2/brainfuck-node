@@ -55,10 +55,11 @@ function main(text) {
       }
       break;
     case ".":
-      console.log(String.fromCharCode(mem[curmem]));
+      process.stdout.write(String.fromCharCode(mem[curmem]));
+      // console.log(String.fromCharCode(mem[curmem]));
       break;
     case ",":
-      // mem[curmem] = Console.in.read;
+      mem[curmem] = process.openStdin();
       break;
     default:
       break;
