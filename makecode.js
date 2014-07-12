@@ -67,9 +67,9 @@ var bf = {
 
 var fs = require('fs');
 fs.readFile(process.argv[2], 'utf8', function (err, text) {
-    var data = bf.fuckit(text);
-fs.writeFile(process.argv[3], data , function (err) {
+  var data = bf.fuckit(text);
+  fs.writeFile(process.argv[3], data , function (err) {
     console.log(data);
     console.log(err);
-});
+  });
 });
