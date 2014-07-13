@@ -1,5 +1,8 @@
 function main(text) {
-  var mem    = [0,0,0,0,0,0,0,0];
+  var mem = [];
+  for(var a=0;a<30000;a++) {
+    mem[a] = 0;
+  };
   var curmem = 0;
   var i      = 0;
   var nest   = 0;
