@@ -59,7 +59,6 @@ function main(text) {
       break;
     case ".":
       process.stdout.write(String.fromCharCode(mem[curmem]));
-      // console.log(String.fromCharCode(mem[curmem]));
       break;
     case ",":
       mem[curmem] = process.openStdin();
