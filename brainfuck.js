@@ -4,11 +4,10 @@ var pc = 0;
 
 function main() {
   var curmem = 0;
-  var nest   = 0;
 
   while (pc < src.length) {
-    // console.log("pc=%d src[pc]=%s curmem=%d mem[%d]=%d nest=%d\n",
-    //   pc, src[pc], curmem, curmem, mem[curmem], nest);
+    // console.log("pc=%d src[pc]=%s curmem=%d mem[%d]=%d\n",
+    //   pc, src[pc], curmem, curmem, mem[curmem]);
     switch (src[pc]) {
     case "-":
       mem[curmem]--;
@@ -26,7 +25,7 @@ function main() {
       if (mem[curmem] !== 0) {
         break;
       };
-      nest = 0;
+      var nest = 0;
       while (pc < src.length) {
         if (src[pc] === "[") {
           nest++;
@@ -43,7 +42,7 @@ function main() {
       if (mem[curmem] === 0) {
         break;
       };
-      nest = 0;
+      var nest = 0;
       while (pc >= 0) {
         if (src[pc] === "]") {
           nest++;
