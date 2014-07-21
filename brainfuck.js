@@ -1,72 +1,73 @@
-function main(text) {
-  var mem = [];
-  for(var a=0;a<30000;a++) {
-    mem[a] = 0;
-  };
-  var curmem = 0;
-  var i      = 0;
-  var nest   = 0;
+var mem = new Uint8Array(30000);
+var src = "";
+var pc = 0;
+var reg = 0;
+var buf = "";
 
-  while (i < text.length) {
-    // console.log("i=%d text[i]=%s curmem=%d mem[%d]=%d nest=%d\n",
-    //   i, text[i], curmem, curmem, mem[curmem], nest);
-    switch (text[i]) {
+function main() {
+  for (;;) {
+    if (pc >= src.length) process.exit(0);
+    // console.log("pc=%d src[pc]=%s reg=%d mem[%d]=%d\n",
+    //   pc, src[pc], reg, reg, mem[reg]);
+    switch (src[pc]) {
     case "-":
-      mem[curmem]--;
+      mem[reg]--;
       break;
     case "+":
-      mem[curmem]++;
+      mem[reg]++;
       break;
     case "<":
-      curmem--;
+      reg--;
       break;
     case ">":
-      curmem++;
+      reg++;
       break;
     case "[":
-      if (mem[curmem] !== 0) {
+      if (mem[reg] !== 0) {
         break;
       };
-      nest = 0;
-      while (i < text.length) {
-        if (text[i] === "[") {
+      var nest = 0;
+      while (pc < src.length) {
+        if (src[pc] === "[") {
           nest++;
-        } else if (text[i] === "]") {
+        } else if (src[pc] === "]") {
           nest--;
           if (nest === 0) {
             break;
           };
         };
-        i++;
+        pc++;
       }
       break;
     case "]":
-      if (mem[curmem] === 0) {
+      if (mem[reg] === 0) {
         break;
       };
-      nest = 0;
-      while (i >= 0) {
-        if (text[i] === "]") {
+      var nest = 0;
+      while (pc >= 0) {
+        if (src[pc] === "]") {
           nest++;
-        } else if (text[i] === "[") {
+        } else if (src[pc] === "[") {
           nest--;
           if (nest === 0) {
             break;
           };
         }
-        i--;
+        pc--;
       }
       break;
     case ".":
-      process.stdout.write(String.fromCharCode(mem[curmem]));
+      process.stdout.write(String.fromCharCode(mem[reg]));
       break;
     case ",":
-      mem[curmem] = process.openStdin();
+      if (buf.length == 0) return;
+      mem[reg] = buf.charCodeAt(0);
+      buf = buf.substring(1);
       break;
     default:
       break;
     }
-    i++;
+    pc++;
   }
 }
 
@@ -75,7 +76,13 @@ if (process.argv.length < 3) {
   return;
 }
 
+process.stdin.on('data', function(chunk) {
+  buf += chunk;
+  main();
+});
+
 var fs = require('fs');
-fs.readFile(process.argv[2], 'utf8', function (err, text) {
-  main(text);
+fs.readFile(process.argv[2], 'utf8', function (err, s) {
+  src = s;
+  main();
 });
