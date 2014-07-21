@@ -1,11 +1,8 @@
+var mem = new Uint8Array(30000);
 var src = "";
 var pc = 0;
 
 function main() {
-  var mem = [];
-  for(var a=0;a<30000;a++) {
-    mem[a] = 0;
-  };
   var curmem = 0;
   var nest   = 0;
 
