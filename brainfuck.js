@@ -4,7 +4,8 @@ var pc = 0;
 var reg = 0;
 
 function main() {
-  while (pc < src.length) {
+  for (;;) {
+    if (pc >= src.length) process.exit(0);
     // console.log("pc=%d src[pc]=%s reg=%d mem[%d]=%d\n",
     //   pc, src[pc], reg, reg, mem[reg]);
     switch (src[pc]) {
