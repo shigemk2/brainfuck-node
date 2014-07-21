@@ -1,28 +1,27 @@
 var mem = new Uint8Array(30000);
 var src = "";
 var pc = 0;
+var reg = 0;
 
 function main() {
-  var curmem = 0;
-
   while (pc < src.length) {
-    // console.log("pc=%d src[pc]=%s curmem=%d mem[%d]=%d\n",
-    //   pc, src[pc], curmem, curmem, mem[curmem]);
+    // console.log("pc=%d src[pc]=%s reg=%d mem[%d]=%d\n",
+    //   pc, src[pc], reg, reg, mem[reg]);
     switch (src[pc]) {
     case "-":
-      mem[curmem]--;
+      mem[reg]--;
       break;
     case "+":
-      mem[curmem]++;
+      mem[reg]++;
       break;
     case "<":
-      curmem--;
+      reg--;
       break;
     case ">":
-      curmem++;
+      reg++;
       break;
     case "[":
-      if (mem[curmem] !== 0) {
+      if (mem[reg] !== 0) {
         break;
       };
       var nest = 0;
@@ -39,7 +38,7 @@ function main() {
       }
       break;
     case "]":
-      if (mem[curmem] === 0) {
+      if (mem[reg] === 0) {
         break;
       };
       var nest = 0;
@@ -56,10 +55,10 @@ function main() {
       }
       break;
     case ".":
-      process.stdout.write(String.fromCharCode(mem[curmem]));
+      process.stdout.write(String.fromCharCode(mem[reg]));
       break;
     case ",":
-      mem[curmem] = process.openStdin();
+      mem[reg] = process.openStdin();
       break;
     default:
       break;
