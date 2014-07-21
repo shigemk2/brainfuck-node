@@ -2,6 +2,7 @@ var mem = new Uint8Array(30000);
 var src = "";
 var pc = 0;
 var reg = 0;
+var buf = "";
 
 function main() {
   for (;;) {
@@ -59,7 +60,9 @@ function main() {
       process.stdout.write(String.fromCharCode(mem[reg]));
       break;
     case ",":
-      mem[reg] = process.openStdin();
+      if (buf.length == 0) return;
+      mem[reg] = buf.charCodeAt(0);
+      buf = buf.substring(1);
       break;
     default:
       break;
@@ -72,6 +75,11 @@ if (process.argv.length < 3) {
   console.log('missing argument.');
   return;
 }
+
+process.stdin.on('data', function(chunk) {
+  buf += chunk;
+  main();
+});
 
 var fs = require('fs');
 fs.readFile(process.argv[2], 'utf8', function (err, s) {
