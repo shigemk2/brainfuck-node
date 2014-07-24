@@ -6,7 +6,7 @@ brainfuck interpreter by Node.js
 ### Usage
 
 ```sh
-$ branfuck.js brainfuck/shigemk2.b
+$ node branfuck.js brainfuck/shigemk2.b
               $$                                                $$    $$    .d$$$$$$$b.                
               $b        d$P                                     $$   $$    .d$       Y$b               
 .$$$$$$b.     $$        d$P                                     $$  $$                Y$$              
