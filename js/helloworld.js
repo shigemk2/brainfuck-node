@@ -1,121 +1,125 @@
 var mem = new Uint8Array(30000);
 var r = 0;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* [ */ while (mem[r]) {
-    /* > */ r++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* > */ r++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* > */ r++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* < */ r--;
-    /* < */ r--;
-    /* < */ r--;
-    /* - */ mem[r]--;
-    /* ] */ };
-    /* > */ r++;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* > */ r++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* > */ r++;
-    /* - */ mem[r]--;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* < */ r--;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* + */ mem[r]++;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* - */ mem[r]--;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
-    /* > */ r++;
-    /* + */ mem[r]++;
-    /* . */ process.stdout.write(String.fromCharCode(mem[r]));;
+var buf = '';
+function main() {
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+while (mem[r]) { /* [ */
+r++; /* > */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+r++; /* > */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+r++; /* > */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+r--; /* < */
+r--; /* < */
+r--; /* < */
+mem[r]--; /* - */
+}; /* ] */
+r++; /* > */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+r++; /* > */
+mem[r]++; /* + */
+mem[r]++; /* + */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+r++; /* > */
+mem[r]--; /* - */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+r--; /* < */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+mem[r]++; /* + */
+mem[r]++; /* + */
+mem[r]++; /* + */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+mem[r]--; /* - */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+r++; /* > */
+mem[r]++; /* + */
+process.stdout.write(String.fromCharCode(mem[r])); /* . */
+};
+main();
