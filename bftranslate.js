@@ -23,6 +23,7 @@ function main() {
   var gchar    = "if (buf.length == 0) return;\n";
   gchar += "mem[r] = buf.charCodeAt(0);\n";
   gchar += "buf = buf.substring(1);\n";
+  var gchar_flg = false;
 
   var return0  = "return;\n";
 
@@ -50,14 +51,19 @@ function main() {
     case '.':
       data += pchar;
       break;
-      case ',':
+    case ',':
       data += gchar;
+      gchar_flg = true;
       break;
-      }
+    }
     pc++;
   }
   data += "};\n";
-  data += "process.stdin.on('data', function(chunk) { buf += chunk; main(); });\n";
+  if (gchar_flg === true) {
+    data += "process.stdin.on('data', function(chunk) { buf += chunk; main(); });\n";
+  } else {
+    data += "main();\n";
+  };
 
   return data;
 }
