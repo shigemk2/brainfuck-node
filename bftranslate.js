@@ -85,7 +85,8 @@ function main() {
       break;
     }
   }
-  // console.log(hascomma);
+  // console.log('hascomma: %s', hascomma);
+  // console.log('bracket: %s', bracket);
   var data = '';
   // console.log(process.argv.length);
   if (process.argv.length < 2) {
