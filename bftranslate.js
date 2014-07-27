@@ -12,6 +12,8 @@ function main() {
   data += "var mem = new Uint8Array(30000);\n";
   data += "var r = 0;\n";
   data += "var buf = '';\n";
+  data += "function putchar() { process.stdout.write(String.fromCharCode(mem[r]))};\n";
+  data += "function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }\n;";
   data += "function main() {\n";
   var plus     = "mem[r]++; /* + */\n";
   var minus    = "mem[r]--; /* - */\n";
@@ -19,10 +21,8 @@ function main() {
   var whilec   = "}; /* ] */\n";
   var memplus  = "r++; /* > */\n";
   var memminus = "r--; /* < */\n";
-  var pchar    = "process.stdout.write(String.fromCharCode(mem[r])); /* . */\n";
-  var gchar    = "if (buf.length == 0) return;\n";
-  gchar += "mem[r] = buf.charCodeAt(0);\n";
-  gchar += "buf = buf.substring(1);\n";
+  var pchar    = "putchar(); /* . */\n";
+  var gchar    = "if(! getchar()) return true; /* , */ \n";
   var gchar_flg = false;
 
   var return0  = "return;\n";
