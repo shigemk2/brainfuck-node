@@ -19,9 +19,12 @@ function main() {
   data += "var mem = new Uint8Array(30000);\n";
   data += "var r = 0;\n";
   data += "var buf = '';\n";
+  data += "var pc = [];\n";
   data += "function putchar() { process.stdout.write(String.fromCharCode(mem[r]))};\n";
   data += "function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }\n;";
   data += "function main() {\n";
+  data += "switch (pc.pop()) {\n";
+  data += "default:\n";
   var plus     = "mem[r]++; /* + */\n";
   var minus    = "mem[r]--; /* - */\n";
   var whileo   = "while (mem[r]) { /* [ */\n";
@@ -63,6 +66,7 @@ function main() {
     }
     pc++;
   }
+  data += "};\n";
   data += "};\n";
   if (gchar_flg === true) {
     data += "process.stdin.on('data', function(chunk) { buf += chunk; main(); });\n";
