@@ -3,20 +3,21 @@ var src = "";
 var pc = 0;
 var gchar_flg = false;
 var hascomma = [];
+var pos = [0];
 
 function set_data(pc, data) {
   var plus     = "mem[r]++; /* + */\n";
   var minus    = "mem[r]--; /* - */\n";
   var whileo   = "while (mem[r]) { /* [ */\n";
-  var whilec   = "}; /* ] */\n";
+  var whilec   = "} /* ] */\n";
   var memplus  = "r++; /* > */\n";
   var memminus = "r--; /* < */\n";
   var pchar    = "putchar(); /* . */\n";
-  var gchar    = "if(! getchar()) return true; /* , */ \n";
+  var gchar    = "if(! getchar()) return pc = [1, 1]; /* , */ \n";
 
   var return0  = "return;\n";
 
-  while( pc <= src.length ){
+  while( pc <= src.length ) {
     // console.log(src[pc]);
     switch (src[pc]) {
     case '+':
@@ -32,22 +33,38 @@ function set_data(pc, data) {
       data += memminus;
       break;
     case '[':
-      data += whileo;
+      if (hascomma[pc]) {
+        data += "case " + (++pos[pos.length - 1]) + ":\n";
+        data += "while (pc.length || mem[r]) { /* [ */\n";
+        data += "switch (pc.pop()) {\n";
+        data += "default:\n";
+      } else {
+        data += whileo;
+      }
+      pos.push(0);
       break;
     case ']':
+      if (hascomma[pc]) {
+        data += "}\n";
+      }
+      pos.pop();
       data += whilec;
       break;
     case '.':
       data += pchar;
       break;
     case ',':
-      data += gchar;
+      pos.reverse();
+      ++pos[0];
+      data += "if(! getchar()) return pc = ["+ pos.join(", ") + "];\n";
+      data += "case " + pos[0] + ":\n";
+      pos.reverse();
       break;
     }
     pc++;
   }
   return data;
-};
+}
 
 function main() {
   var bracket = [];
@@ -58,7 +75,7 @@ function main() {
       bracket.push(i);
       break;
     case "]":
-      bracket.pop();
+      hascomma[i] = hascomma[bracket.pop()];
       break;
     case ",":
       gchar_flg = true;
@@ -80,20 +97,23 @@ function main() {
   data += "var r = 0;\n";
   data += "var buf = '';\n";
   data += "var pc = [];\n";
-  data += "function putchar() { process.stdout.write(String.fromCharCode(mem[r]))};\n";
-  data += "function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }\n;";
+  data += "function putchar() { process.stdout.write(String.fromCharCode(mem[r]));}\n";
+  data += "function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }\n";
   data += "function main() {\n";
-  data += "switch (pc.pop()) {\n";
-  data += "default:\n";
-
+  if (gchar_flg) {
+    data += "switch (pc.pop()) {\n";
+    data += "default:\n";
+  }
   data = set_data(pc, data);
-  data += "};\n";
-  data += "};\n";
+  if(gchar_flg) {
+    data += "}\n";
+  }
+  data += "process.exit(0);\n";
+  data += "}\n";
   if (gchar_flg === true) {
-    data += "process.stdin.on('data', function(chunk) { buf += chunk; main(); });\n";
-  } else {
-    data += "main();\n";
-  };
+    data += "process.stdin.on('data', function(chunk) { buf += chunk; getchar(); main(); });\n";
+  }
+  data += "main();\n";
 
   return data;
 }

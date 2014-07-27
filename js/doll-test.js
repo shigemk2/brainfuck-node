@@ -45,6 +45,7 @@ function main() {
  
 process.stdin.on('data', function(chunk) {
     buf += chunk;
+    getchar();
     main();
 });
  
