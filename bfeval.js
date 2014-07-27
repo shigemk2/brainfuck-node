@@ -122,5 +122,7 @@ var fs = require('fs');
 fs.readFile(process.argv[2], 'utf8', function (err, s) {
   src = s;
   var data = main();
-  eval(data);
+  // 無名関数にすると参照関係が自己完結となり、変数のスコープが狭くなるので処理が早くなる
+  // http://blog.as-is.net/2008/09/chrome-eval-cont.html
+  eval("(function() {" + data + "})();");
 });
