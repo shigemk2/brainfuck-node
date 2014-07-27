@@ -5,8 +5,6 @@ var pc = [];
 function putchar() { process.stdout.write(String.fromCharCode(mem[r]));}
 function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }
 function main() {
-switch (pc.pop()) {
-default:
 mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
@@ -15,32 +13,25 @@ mem[r]++; /* + */
 mem[r]++; /* + */
 while (mem[r]) { /* [ */
 r++; /* > */
-mem[r]++; /* + */
-mem[r]++; /* + */
-mem[r]++; /* + */
-mem[r]++; /* + */
-mem[r]++; /* + */
-mem[r]++; /* + */
+mem[r]--; /* - */
+while (mem[r]) { /* [ */
+r++; /* > */
+mem[r]--; /* - */
+while (mem[r]) { /* [ */
+r++; /* > */
+mem[r]--; /* - */
+while (mem[r]) { /* [ */
+mem[r]--; /* - */
+} /* ] */
 r--; /* < */
 mem[r]--; /* - */
 } /* ] */
-mem[r]++; /* + */
-case 1:
-while (pc.length || mem[r]) { /* [ */
-switch (pc.pop()) {
-default:
-r++; /* > */
-putchar(); /* . */
-r++; /* > */
-if(! getchar()) return pc = [1, 1];
-case 1:
-putchar(); /* . */
 r--; /* < */
-r--; /* < */
-}
+mem[r]--; /* - */
 } /* ] */
-}
+r--; /* < */
+mem[r]--; /* - */
+} /* ] */
 process.exit(0);
 }
-process.stdin.on('data', function(chunk) { buf += chunk; getchar(); main(); });
 main();
