@@ -2,16 +2,30 @@ var mem = new Uint8Array(30000);
 var src = "";
 var pc = 0;
 var gchar_flg = false;
+var hascomma = [];
 
 function main() {
-  for (var i=0;i<src.length;i++) {
-    if(src[i] == ',') {
-      gchar_flg = true;
+  var bracket = [];
+  for (var i = 0; i < src.length; ++i) {
+    hascomma[i] = 0;
+    switch (src[i]) {
+    case "[":
+      bracket.push(i);
       break;
-    };
-  };
+    case "]":
+      bracket.pop();
+      break;
+    case ",":
+      gchar_flg = true;
+      for (var j = 0; j < bracket.length; ++j) {
+        ++hascomma[bracket[j]];
+      }
+      break;
+    }
+  }
+  // console.log(hascomma);
   var data = '';
-  console.log(process.argv.length);
+  // console.log(process.argv.length);
   if (process.argv.length < 2) {
     console.log("source nothing\n");
     return data;
@@ -37,7 +51,7 @@ function main() {
   var return0  = "return;\n";
 
   while( pc <= src.length ){
-    console.log(src[pc]);
+    // console.log(src[pc]);
     switch (src[pc]) {
     case '+':
       data += plus;
@@ -82,7 +96,7 @@ fs.readFile(process.argv[2], 'utf8', function (err, s) {
   src = s;
   var data = main();
   fs.writeFile(process.argv[3], data , function (err) {
-    console.log(data);
-    console.log(err);
+    // console.log(data);
+    // console.log(err);
   });
 });
