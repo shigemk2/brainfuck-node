@@ -1,8 +1,15 @@
 var mem = new Uint8Array(30000);
 var src = "";
 var pc = 0;
+var gchar_flg = false;
 
 function main() {
+  for (var i=0;i<src.length;i++) {
+    if(src[i] == ',') {
+      gchar_flg = true;
+      break;
+    };
+  };
   var data = '';
   console.log(process.argv.length);
   if (process.argv.length < 2) {
@@ -23,7 +30,6 @@ function main() {
   var memminus = "r--; /* < */\n";
   var pchar    = "putchar(); /* . */\n";
   var gchar    = "if(! getchar()) return true; /* , */ \n";
-  var gchar_flg = false;
 
   var return0  = "return;\n";
 
@@ -53,7 +59,6 @@ function main() {
       break;
     case ',':
       data += gchar;
-      gchar_flg = true;
       break;
     }
     pc++;
