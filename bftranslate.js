@@ -4,41 +4,7 @@ var pc = 0;
 var gchar_flg = false;
 var hascomma = [];
 
-function main() {
-  var bracket = [];
-  for (var i = 0; i < src.length; ++i) {
-    hascomma[i] = 0;
-    switch (src[i]) {
-    case "[":
-      bracket.push(i);
-      break;
-    case "]":
-      bracket.pop();
-      break;
-    case ",":
-      gchar_flg = true;
-      for (var j = 0; j < bracket.length; ++j) {
-        ++hascomma[bracket[j]];
-      }
-      break;
-    }
-  }
-  // console.log(hascomma);
-  var data = '';
-  // console.log(process.argv.length);
-  if (process.argv.length < 2) {
-    console.log("source nothing\n");
-    return data;
-  }
-  data += "var mem = new Uint8Array(30000);\n";
-  data += "var r = 0;\n";
-  data += "var buf = '';\n";
-  data += "var pc = [];\n";
-  data += "function putchar() { process.stdout.write(String.fromCharCode(mem[r]))};\n";
-  data += "function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }\n;";
-  data += "function main() {\n";
-  data += "switch (pc.pop()) {\n";
-  data += "default:\n";
+function set_data(pc, data) {
   var plus     = "mem[r]++; /* + */\n";
   var minus    = "mem[r]--; /* - */\n";
   var whileo   = "while (mem[r]) { /* [ */\n";
@@ -80,6 +46,47 @@ function main() {
     }
     pc++;
   }
+  return data;
+};
+
+function main() {
+  var bracket = [];
+  for (var i = 0; i < src.length; ++i) {
+    hascomma[i] = 0;
+    switch (src[i]) {
+    case "[":
+      bracket.push(i);
+      break;
+    case "]":
+      bracket.pop();
+      break;
+    case ",":
+      gchar_flg = true;
+      for (var j = 0; j < bracket.length; ++j) {
+        ++hascomma[bracket[j]];
+      }
+      break;
+    }
+  }
+  // console.log(hascomma);
+  var data = '';
+  // console.log(process.argv.length);
+  if (process.argv.length < 2) {
+    console.log("source nothing\n");
+    return data;
+  }
+
+  data += "var mem = new Uint8Array(30000);\n";
+  data += "var r = 0;\n";
+  data += "var buf = '';\n";
+  data += "var pc = [];\n";
+  data += "function putchar() { process.stdout.write(String.fromCharCode(mem[r]))};\n";
+  data += "function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }\n;";
+  data += "function main() {\n";
+  data += "switch (pc.pop()) {\n";
+  data += "default:\n";
+
+  data = set_data(pc, data);
   data += "};\n";
   data += "};\n";
   if (gchar_flg === true) {
