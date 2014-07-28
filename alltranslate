@@ -1,0 +1,8 @@
+#!/bin/sh
+#_FILENAME=${_BASENAME%.*}
+__B=brainfuck/*
+for i in $__B
+do
+    __JS=`echo $i | sed -e 's/brainfuck\//js\//' | sed -e 's/.b/.js/'`
+    node bftranslate.js $i $__JS 
+done
