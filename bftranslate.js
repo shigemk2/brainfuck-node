@@ -6,31 +6,20 @@ var hascomma = [];
 var pos = [0];
 
 function set_data(pc, data) {
-  var plus     = "mem[r]++; /* + */\n";
-  var minus    = "mem[r]--; /* - */\n";
-  var whileo   = "while (mem[r]) { /* [ */\n";
-  var whilec   = "} /* ] */\n";
-  var memplus  = "r++; /* > */\n";
-  var memminus = "r--; /* < */\n";
-  var pchar    = "putchar(); /* . */\n";
-  var gchar    = "if(! getchar()) return pc = [1, 1]; /* , */ \n";
-
-  var return0  = "return;\n";
-
   while( pc <= src.length ) {
     // console.log(src[pc]);
     switch (src[pc]) {
     case '+':
-      data += plus;
+      data += "mem[r]++; /* + */\n";
       break;
     case '-':
-      data += minus;
+      data += "mem[r]--; /* - */\n";
       break;
     case '>':
-      data += memplus;
+      data += "r++; /* > */\n";
       break;
     case '<':
-      data += memminus;
+      data += "r--; /* < */\n";
       break;
     case '[':
       if (hascomma[pc]) {
@@ -39,7 +28,7 @@ function set_data(pc, data) {
         data += "switch (pc.pop()) {\n";
         data += "default:\n";
       } else {
-        data += whileo;
+        data += "while (mem[r]) { /* [ */\n";
       }
       pos.push(0);
       break;
@@ -48,10 +37,10 @@ function set_data(pc, data) {
         data += "}\n";
       }
       pos.pop();
-      data += whilec;
+      data += "} /* ] */\n";
       break;
     case '.':
-      data += pchar;
+      data += "putchar(); /* . */\n";
       break;
     case ',':
       pos.reverse();
