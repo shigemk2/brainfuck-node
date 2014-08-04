@@ -1,10 +1,10 @@
+var ffi = require('ffi');
+var libc = ffi.Library('libc.dylib', {
+  'putchar': ['int', ['int']],
+  'getchar': ['int', []],
+});
 var mem = new Uint8Array(30000);
 var r = 0;
-var buf = '';
-var pc = [];
-function putchar() { process.stdout.write(String.fromCharCode(mem[r]));}
-function getchar() { if (buf.length == 0) return false; mem[r] = buf.charCodeAt(0); buf = buf.substring(1); return true; }
-function main() {
 mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
@@ -48,11 +48,11 @@ r--; /* < */
 mem[r]--; /* - */
 } /* ] */
 r++; /* > */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 r++; /* > */
 mem[r]++; /* + */
 mem[r]++; /* + */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
@@ -60,15 +60,15 @@ mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
-putchar(); /* . */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
+libc.putchar(mem[r]); /* . */
 mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 r++; /* > */
 mem[r]--; /* - */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
@@ -81,7 +81,7 @@ mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 r--; /* < */
 mem[r]++; /* + */
 mem[r]++; /* + */
@@ -91,7 +91,7 @@ mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
@@ -100,18 +100,18 @@ mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 mem[r]++; /* + */
 mem[r]++; /* + */
 mem[r]++; /* + */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
@@ -120,10 +120,7 @@ mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
 mem[r]--; /* - */
-putchar(); /* . */
+libc.putchar(mem[r]); /* . */
 r++; /* > */
 mem[r]++; /* + */
-putchar(); /* . */
-process.exit(0);
-}
-main();
+libc.putchar(mem[r]); /* . */
