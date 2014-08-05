@@ -1,7 +1,8 @@
 function main(src) {
   var data = "", pc = 0;
   data += "var ffi = require('ffi');\n";
-  data += "var libc = ffi.Library('msvcrt', {\n";
+  data += "var libcName = process.platform == 'win32' ? 'msvcrt' : 'libc';\n";
+  data += "var libc = ffi.Library(libcName, {\n";
   data += "  'putchar': ['int', ['int']],\n";
   data += "  'getchar': ['int', []],\n";
   data += "});\n";
