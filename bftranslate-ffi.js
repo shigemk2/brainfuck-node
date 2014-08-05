@@ -18,30 +18,30 @@ function main(src) {
     // console.log(src[pc]);
     switch (src[pc]) {
     case '+':
-      write("mem[r]++; /* + */");
+      write("mem[r]++; // +");
       break;
     case '-':
-      write("mem[r]--; /* - */");
+      write("mem[r]--; // -");
       break;
     case '>':
-      write("r++; /* > */");
+      write("r++; // >");
       break;
     case '<':
-      write("r--; /* < */");
+      write("r--; // <");
       break;
     case '[':
-      write("while (mem[r]) { /* [ */");
+      write("while (mem[r]) { // [");
       indent += "  ";
       break;
     case ']':
       indent = indent.slice(0, -2);
-      write("} /* ] */");
+      write("} // ]");
       break;
     case '.':
-      write("libc.putchar(mem[r]); /* . */");
+      write("libc.putchar(mem[r]); // .");
       break;
     case ',':
-      write("mem[r] = libc.getchar(); /* , */");
+      write("mem[r] = libc.getchar(); // ,");
       break;
     }
     pc++;
