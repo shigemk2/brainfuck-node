@@ -5,7 +5,6 @@ function write(line) {
 }
 
 function main(src) {
-  var pc = 0;
   write("var ffi = require('ffi');");
   write("var libcName = process.platform == 'win32' ? 'msvcrt' : 'libc';");
   write("var libc = ffi.Library(libcName, {");
@@ -14,7 +13,7 @@ function main(src) {
   write("});");
   write("var mem = new Uint8Array(30000);");
   write("var r = 0;");
-  while( pc <= src.length ) {
+  for (var pc = 0; pc < src.length; pc++) {
     // console.log(src[pc]);
     switch (src[pc]) {
     case '+':
@@ -44,7 +43,6 @@ function main(src) {
       write("mem[r] = libc.getchar(); // ,");
       break;
     }
-    pc++;
   }
 }
 
