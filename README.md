@@ -62,6 +62,39 @@ process.stdin.on('data', function(chunk) { buf += chunk; getchar(); main(); });
 main();
 ```
 
+
+### Usage(Translator with FFI)
+
+```sh
+$ node bftranslate-ffi.js brainfuck/getchar.b js/getchar.js
+```
+
+getchar.b
+```sh
++[>,.<]
+```
+
+getchar.js
+```javascript
+var ffi = require('ffi');
+var libcName = process.platform == 'win32' ? 'msvcrt' : 'libc';
+var libc = ffi.Library(libcName, {
+  'putchar': ['int', ['int']],
+  'getchar': ['int', []],
+});
+var mem = new Uint8Array(30000);
+var r = 0;
+mem[r]++; // +
+while (mem[r]) { // [
+  r++; // >
+  mem[r] = libc.getchar(); // ,
+  libc.putchar(mem[r]); // .
+  r--; // <
+} // ]
+```
+
+
+
 ### Usage(JIT Compiler)
 
 ```sh
