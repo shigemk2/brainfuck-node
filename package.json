@@ -17,9 +17,10 @@
   },
   "homepage": "https://github.com/shigemk2/brainfuck-node",
   "devDependencies": {
+    "ffi": "^1.2.7",
     "grunt": "^0.4.5",
-    "grunt-contrib-watch": "^0.6.1",
     "grunt-contrib-jshint": "^0.10.0",
-    "ffi": "^1.2.7"
+    "grunt-contrib-watch": "^0.6.1",
+    "ref": "^0.3.2"
   }
 }
