@@ -1,6 +1,12 @@
 var ref = require("ref");
 var ffi = require("ffi");
-var os  = process.platform;
+
+var os   = process.platform;
+var arch = process.arch;
+if (arch != "ia32" && arch != "x64") {
+  console.log("unknown arch: " + arch);
+  process.exit(1);
+}
 
 var jitalloc = (function() {
   if (os == "win32") {
@@ -59,26 +65,40 @@ function main(src) {
 
   var codes = "";
   var begin = [];
-  codes += "\x56"; // push esi
-  codes += "\x8b\x74\x24\x08"; // mov esi, [esp+8]
+  codes += "\x53";                         // push ebx|rbx
+  if (arch == "ia32") {
+    codes += "\x8b\x5c\x24\x08";           // mov ebx, [esp+8]
+  } else if (arch == "x64") {
+    codes += "\x56";                       // push rsi
+    codes += "\x52";                       // push rdx
+    codes += "\x48\x89\xfb";               // mov rbx, rdi
+  }
 
   for (var pc = 0; pc < src.length; pc++) {
     switch (src[pc]) {
     case "+":
-      codes += "\xfe\x06";                 // inc byte ptr[esi]
+      codes += "\xfe\x03";                 // inc byte ptr[ebx|rbx]
       break;
     case "-":
-      codes += "\xfe\x0e";                 // dec byte ptr[esi]
+      codes += "\xfe\x0b";                 // dec byte ptr[ebx|rbx]
       break;
     case ">":
-      codes += "\x46";                     // inc esi
+      if (arch == "ia32") {
+        codes += "\x43";                   // inc ebx
+      } else if (arch == "x64") {
+        codes += "\x48\xff\xc3";           // inc rbx
+      }
       break;
     case "<":
-      codes += "\x4e";                     // dec esi
+      if (arch == "ia32") {
+        codes += "\x4b";                   // dec ebx
+      } else if (arch == "x64") {
+        codes += "\x48\xff\xcb";           // dec rbx
+      }
       break;
     case "[":
       begin.push(codes.length);
-      codes += "\x80\x3e\x00";             // cmp byte ptr[esi], 0
+      codes += "\x80\x3b\x00";             // cmp byte ptr[ebx|rbx], 0
       codes += "\x0f\x84\x00\x00\x00\x00"; // jz near ????
       break;
     case "]":
@@ -90,18 +110,30 @@ function main(src) {
       codes += "\xe9" + conv32(ad1 - ad2); // jmp near begin
       break;
     case ".":
-      codes += "\x0f\xb6\x06";             // movzx eax, byte ptr[esi]
-      codes += "\x50";                     // push eax
-      codes += "\xff\x54\x24\x10";         // call [esp+16]
-      codes += "\x83\xc4\x04";             // add esp, 4
+      if (arch == "ia32") {
+        codes += "\x0f\xb6\x03";           // movzx eax, byte ptr[ebx]
+        codes += "\x50";                   // push eax
+        codes += "\xff\x54\x24\x10";       // call [esp+16]
+        codes += "\x83\xc4\x04";           // add esp, 4
+      } else if (arch == "x64") {
+        codes += "\x0f\xb6\x3b";           // movzx edi, byte ptr[rbx]
+        codes += "\xff\x54\x24\x08";       // call [rsp+8]
+      }
       break;
     case ",":
-      codes += "\xff\x54\x24\x10";         // call [esp+16]
-      codes += "\x88\x06";                 // mov byte ptr[esi], al
+      if (arch == "ia32") {
+        codes += "\xff\x54\x24\x10";       // call [esp+16]
+      } else if (arch == "x64") {
+        codes += "\xff\x14\x24";           // call [rsp]
+      }
+      codes += "\x88\x03";                 // mov bytr ptr[ebx|rbx], al
       break;
     }
   }
-  codes += "\x5e";                         // pop esi
+  if (arch == "x64") {
+    codes += "\x48\x83\xc4\x10";           // add rsp, 16
+  }
+  codes += "\x5b";                         // pop ebx|rbx
   codes += "\xc3";                         // ret
 
   var buf = jitalloc(codes.length);
