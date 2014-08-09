@@ -69,9 +69,15 @@ function main(src) {
   if (arch == "ia32") {
     codes += "\x8b\x5c\x24\x08";           // mov ebx, [esp+8]
   } else if (arch == "x64") {
-    codes += "\x56";                       // push rsi
-    codes += "\x52";                       // push rdx
-    codes += "\x48\x89\xfb";               // mov rbx, rdi
+    if (os == "win32") {
+      codes += "\x52";                     // push rdx
+      codes += "\x41\x50";                 // push r8
+      codes += "\x48\x89\xcb";             // mov rbx, rcx
+    } else {
+      codes += "\x56";                     // push rsi
+      codes += "\x52";                     // push rdx
+      codes += "\x48\x89\xfb";             // mov rbx, rdi
+    }
   }
 
   for (var pc = 0; pc < src.length; pc++) {
@@ -116,15 +122,28 @@ function main(src) {
         codes += "\xff\x54\x24\x10";       // call [esp+16]
         codes += "\x83\xc4\x04";           // add esp, 4
       } else if (arch == "x64") {
-        codes += "\x0f\xb6\x3b";           // movzx edi, byte ptr[rbx]
-        codes += "\xff\x54\x24\x08";       // call [rsp+8]
+        if (os == "win32") {
+          codes += "\x48\x83\xec\x20";     // sub rsp, 32
+          codes += "\x0f\xb6\x0b";         // movzx ecx, byte ptr[rbx]
+          codes += "\xff\x54\x24\x28";     // call [rsp+40]
+          codes += "\x48\x83\xc4\x20";     // add rsp, 32
+        } else {
+          codes += "\x0f\xb6\x3b";         // movzx edi, byte ptr[rbx]
+          codes += "\xff\x54\x24\x08";     // call [rsp+8]
+        }
       }
       break;
     case ",":
       if (arch == "ia32") {
         codes += "\xff\x54\x24\x10";       // call [esp+16]
       } else if (arch == "x64") {
-        codes += "\xff\x14\x24";           // call [rsp]
+        if (os == "win32") {
+          codes += "\x48\x83\xec\x20";     // sub rsp, 32
+          codes += "\xff\x54\x24\x20";     // call [rsp+32]
+          codes += "\x48\x83\xc4\x20";     // add rsp, 32
+        } else {
+          codes += "\xff\x14\x24";         // call [rsp]
+        }
       }
       codes += "\x88\x03";                 // mov bytr ptr[ebx|rbx], al
       break;
