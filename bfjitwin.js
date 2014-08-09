@@ -1,117 +1,95 @@
 var ref = require("ref");
 var ffi = require("ffi");
 
-var mem = new Uint8Array(30000);
-var src = "";
-var pc = 0;
-var reg = 0;
-var buf = "";
+var kernel32 = ffi.Library("kernel32", {
+  "VirtualAlloc": ["pointer", ["pointer", "size_t", "int", "int"]],
+  "VirtualFree": ["bool", ["pointer", "int", "int"]]
+});
 
-function main() {
-  var kernel32 = ffi.Library("kernel32", {
-    "VirtualAlloc": ["pointer", ["pointer", "size_t", "int", "int"]],
-    "VirtualFree": ["bool", ["pointer", "int", "int"]]
-  });
+var MEM_COMMIT  = 0x1000;
+var MEM_RELEASE = 0x8000;
+var PAGE_EXECUTE_READWRITE = 0x40;
 
-  var MEM_COMMIT  = 0x1000;
-  var MEM_RELEASE = 0x8000;
-  var PAGE_EXECUTE_READWRITE = 0x40;
+function jitalloc(size) {
+  var p = kernel32.VirtualAlloc(ref.NULL, size,
+                                MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+  var ret = p.reinterpret(size);
+  ret.free = function() {
+    kernel32.VirtualFree(p, 0, MEM_RELEASE);
+  };
+  return ret;
+}
 
-  function jitalloc(size) {
-    var p = kernel32.VirtualAlloc(ref.NULL, size,
-                                  MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-    var ret = p.reinterpret(size);
-    ret.free = function() {
-      kernel32.VirtualFree(p, 0, MEM_RELEASE);
-    };
-    return ret;
-  }
+// 32ビットの数字をリトルエンディアンに変換する
+function conv32(x) {
+   return String.fromCharCode( x        & 0xff) +
+          String.fromCharCode((x >>  8) & 0xff) +
+          String.fromCharCode((x >> 16) & 0xff) +
+          String.fromCharCode((x >> 24) & 0xff);
+}
 
-  var buf = jitalloc(30000);
+function main(src) {
 
-  if (ref.sizeof.pointer == 4) {
-    // 32bit (i386)
-    buf.binaryWrite(
-      "\x8b\x44\x24\x04" +    // mov eax, [esp+4]
-      "\x03\x44\x24\x08" +    // add eax, [esp+8]
-      "\xc3", 0);             // ret
-  } else {
-    // 64bit (x86-64)
-    buf.binaryWrite(
-      "\x89\xc8" +            // mov eax, ecx
-      "\x01\xd0" +            // add eax, edx
-      "\xc3", 0);             // ret
-  }
+  var codes = "";
+  var begin = [];
+  codes += "\x56"; // push esi
+  codes += "\x8b\x74\x24\x08"; // mov esi, [esp+8]
 
-  var func = ffi.ForeignFunction(buf, "int", ["int", "int"]);
-  console.log(func(1, 2));
-
-  buf.free();
-  for (;;) {
-    if (pc >= src.length) process.exit(0);
-    // console.log("pc=%d src[pc]=%s reg=%d mem[%d]=%d\n",
-    //   pc, src[pc], reg, reg, mem[reg]);
+  for (var pc = 0; pc < src.length; pc++) {
     switch (src[pc]) {
-    case "-":
-      mem[reg]--;
-      break;
     case "+":
-      mem[reg]++;
+      codes += "\xfe\x06";                 // inc byte ptr[esi]
       break;
-    case "<":
-      reg--;
+    case "-":
+      codes += "\xfe\x0e";                 // dec byte ptr[esi]
       break;
     case ">":
-      reg++;
+      codes += "\x46";                     // inc esi
+      break;
+    case "<":
+      codes += "\x4e";                     // dec esi
       break;
     case "[":
-      if (mem[reg] !== 0) {
-        break;
-      };
-      var nest = 0;
-      while (pc < src.length) {
-        if (src[pc] === "[") {
-          nest++;
-        } else if (src[pc] === "]") {
-          nest--;
-          if (nest === 0) {
-            break;
-          };
-        };
-        pc++;
-      }
+      begin.push(codes.length);
+      codes += "\x80\x3e\x00";             // cmp byte ptr[esi], 0
+      codes += "\x0f\x84\x00\x00\x00\x00"; // jz near ????
       break;
     case "]":
-      if (mem[reg] === 0) {
-        break;
-      };
-      var nest = 0;
-      while (pc >= 0) {
-        if (src[pc] === "]") {
-          nest++;
-        } else if (src[pc] === "[") {
-          nest--;
-          if (nest === 0) {
-            break;
-          };
-        }
-        pc--;
-      }
+      var ad1 = begin.pop();
+      var ad2 = codes.length + 5;
+      codes = codes.substring(0, ad1 + 5) +
+              conv32(ad2 - (ad1 + 9)) +
+              codes.substring(ad1 + 9);
+      codes += "\xe9" + conv32(ad1 - ad2); // jmp near begin
       break;
     case ".":
-//      process.stdout.write(String.fromCharCode(mem[reg]));
+      codes += "\x0f\xb6\x06";             // movzx eax, byte ptr[esi]
+      codes += "\x50";                     // push eax
+      codes += "\xff\x54\x24\x10";         // call [esp+16]
+      codes += "\x83\xc4\x04";             // add esp, 4
       break;
     case ",":
-      if (buf.length == 0) return;
-      mem[reg] = buf.charCodeAt(0);
-      buf = buf.substring(1);
-      break;
-    default:
+      codes += "\xff\x54\x24\x10";         // call [esp+16]
+      codes += "\x88\x06";                 // mov byte ptr[esi], al
       break;
     }
-    pc++;
   }
+  codes += "\x5e";                         // pop esi
+  codes += "\xc3";                         // ret
 
+  var buf = jitalloc(codes.length);
+  buf.binaryWrite(codes, 0);
+
+  var func = ffi.ForeignFunction(buf, "void", ["pointer", "pointer", "pointer"]);
+  var mem = new Buffer(30000);
+  mem.fill(0, 0, 30000);
+
+  var dl = new ffi.DynamicLibrary("msvcrt", ffi.RTLD_NOW);
+  var getchar = dl.get("getchar");
+  var putchar = dl.get("putchar");
+  func(mem, putchar, getchar);
+
+  buf.free();
 }
 
 if (process.argv.length < 2) {
@@ -119,14 +97,8 @@ if (process.argv.length < 2) {
   return;
 }
 
-process.stdin.on('data', function(chunk) {
-  buf += chunk;
-  main();
-});
-
 var fs = require('fs');
-fs.readFile(process.argv[2], 'utf8', function (err, s) {
-  src = s;
-  main();
+fs.readFile(process.argv[2], 'utf8', function (err, src) {
+  main(src);
 });
 
