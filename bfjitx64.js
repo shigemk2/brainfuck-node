@@ -78,7 +78,7 @@ function main(src) {
     }
   }
   codes += "\x48\x83\xc4\x10";             // add rsp, 16
-  codes += "\x5e";                         // pop esi
+  codes += "\x5b";                         // pop esi
   codes += "\xc3";                         // ret
 
   var buf = jitalloc(codes.length);
@@ -88,7 +88,8 @@ function main(src) {
   var mem = new Buffer(30000);
   mem.fill(0, 0, 30000);
 
-  var dl = new ffi.DynamicLibrary("libc", ffi.RTLD_NOW);
+  var libcName = "libc" + ffi.Library.EXT;
+  var dl = new ffi.DynamicLibrary(libcName, ffi.RTLD_NOW);
   var getchar = dl.get("getchar");
   var putchar = dl.get("putchar");
   func(mem, putchar, getchar);
